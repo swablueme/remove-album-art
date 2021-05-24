@@ -15,9 +15,11 @@ class process:
         self.remove_artwork()
 
     def load_mp3s(self):
+        #loads music from folders
         return [os.path.join(music_folder, path) for path in os.listdir(os.path.join(os.getcwd(), music_folder))]
 
     def remove_artwork(self):
+        #strips artwork from m4as and mp3s
         for audio in self.music_list:
             mp3=eyed3.load(audio)
             if audio.endswith(".mp3"):
@@ -30,6 +32,7 @@ class process:
             
     @staticmethod
     def sort_folders(mp3, audio_location, artist_name=None):
+        #puts music into folders
         if artist_name is None:
             artist_name=mp3.tag.artist
         #artist_name=artist_name.replace(":"," ")
