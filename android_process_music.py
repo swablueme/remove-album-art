@@ -2,7 +2,9 @@ import eyed3
 import os, shutil
 import mutagen
 from mutagen.mp4 import MP4
+from mutagen.id3 import APIC, ID3
 import re
+eyed3.log.setLevel("ERROR")
 print("Current working directory: {0}".format(os.getcwd()))
 music_folder="to process"
 to_output_to="output"
@@ -15,24 +17,20 @@ class process:
         self.remove_artwork()
 
     def load_mp3s(self):
-        #loads music from folders
         return [os.path.join(music_folder, path) for path in os.listdir(os.path.join(os.getcwd(), music_folder))]
 
     def remove_artwork(self):
-        #strips artwork from m4as and mp3s
         for audio in self.music_list:
-            mp3=eyed3.load(audio)
-            if audio.endswith(".mp3"):
-                mp3.tag.images.remove(u'')
-                mp3.tag.save()
-                process.sort_folders(mp3, audio)
+            if audio.endswith(".mp3") or audio.endswith(".aac"):
+                mp3 = ID3(audio)
+                mp3.delall("APIC")
+                mp3.save()
+                process.sort_folders(mp3, audio, mp3['TPE1'].text[0])
             elif audio.endswith(".m4a"):
                 process.sort_folders(mp3, audio, MP4(audio).tags["©ART"][0])
-                
             
     @staticmethod
     def sort_folders(mp3, audio_location, artist_name=None):
-        #puts music into folders
         if artist_name is None:
             artist_name=mp3.tag.artist
         #artist_name=artist_name.replace(":"," ")
@@ -42,5 +40,6 @@ class process:
         if not os.path.exists(where_to_output):
             os.makedirs(where_to_output)
         shutil.move(audio_location, os.path.join(where_to_output, os.path.basename(audio_location)))
-         
+        
+        
 process()
