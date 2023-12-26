@@ -43,7 +43,6 @@ class process:
 
     @staticmethod
     def sort_folders(audio_location, artist_name=None):
-        # artist_name=artist_name.replace(":"," ")
         artist_name = re.sub("[:|\\|\/|\*|\"|<|>|\|]", "", artist_name)
         print(artist_name)
         where_to_output = os.path.join(to_output_to, artist_name)
