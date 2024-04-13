@@ -3,6 +3,7 @@ import os
 import shutil
 import mutagen
 from mutagen.oggopus import OggOpus
+from mutagen.oggvorbis import OggVorbis
 from mutagen.mp4 import MP4
 from mutagen.id3 import APIC, ID3
 import re
@@ -40,6 +41,9 @@ class process:
                 process.sort_folders(audio, MP4(audio).tags["©ART"][0])
             elif audio.endswith(".opus"):
                 process.sort_folders(audio, OggOpus(audio).tags["artist"][0])
+            elif audio.endswith(".ogg"):
+                process.sort_folders(audio, OggVorbis(audio).tags["artist"][0])
+
 
     @staticmethod
     def sort_folders(audio_location, artist_name=None):
