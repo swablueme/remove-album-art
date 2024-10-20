@@ -8,12 +8,19 @@ from mutagen.mp4 import MP4
 from mutagen.id3 import APIC, ID3
 import re
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
+# sys.stdout.reconfigure(encoding='utf-8')
 
 eyed3.log.setLevel("ERROR")
 print("Current working directory: {0}".format(os.getcwd()))
 music_folder = "to process"
 to_output_to = "output"
+
+
+def relabel_ogg_artist(filename, new_artist):
+    audiofile = OggVorbis(filename)
+    print(audiofile.tags["artist"])
+    audiofile.update(artist=new_artist)
+    audiofile.save()
 
 
 class process:
@@ -42,8 +49,12 @@ class process:
             elif audio.endswith(".opus"):
                 process.sort_folders(audio, OggOpus(audio).tags["artist"][0])
             elif audio.endswith(".ogg"):
-                process.sort_folders(audio, OggVorbis(audio).tags["artist"][0])
-
+                audiofile = OggVorbis(audio)
+                for tag in ("metadata_block_picture", "comment"):
+                    if tag in audiofile.keys():
+                        audiofile.__delitem__(tag)
+                        audiofile.save()
+                process.sort_folders(audio, audiofile.tags["artist"][0])
 
     @staticmethod
     def sort_folders(audio_location, artist_name=None):
@@ -56,4 +67,5 @@ class process:
             where_to_output, os.path.basename(audio_location)))
 
 
+# rename("梶浦 由記 - アンチヒーロー〜Main Theme〜.ogg", "Yuki Kajiura")
 process()
